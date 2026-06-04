@@ -13,19 +13,17 @@ function createSupabaseClient() {
       ...(!SUPABASE_URL ? ['SUPABASE_URL'] : []),
       ...(!SUPABASE_PUBLISHABLE_KEY ? ['SUPABASE_PUBLISHABLE_KEY'] : []),
     ];
-    const message = `Missing Supabase environment variable(s): ${missing.join(', ')}. Connect Supabase in Lovable Cloud.`;
+    const message = `Missing Supabase environment variable(s): ${missing.join(', ')}. Please add them to your Vercel Project Environment Variables.`;
     console.error(`[Supabase] ${message}`);
-    // Don't throw during SSR - return a mock client instead
-    if (typeof window === 'undefined') {
-      return createClient<Database>('https://placeholder.supabase.co', 'placeholder-key', {
-        auth: {
-          storage: undefined,
-          persistSession: false,
-          autoRefreshToken: false,
-        }
-      });
-    }
-    throw new Error(message);
+    
+    // Return a mock client so the UI layout doesn't crash on load
+    return createClient<Database>('https://placeholder.supabase.co', 'placeholder-key', {
+      auth: {
+        storage: undefined,
+        persistSession: false,
+        autoRefreshToken: false,
+      }
+    });
   }
 
   return createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
